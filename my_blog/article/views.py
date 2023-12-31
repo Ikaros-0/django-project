@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 import markdown
+from django.contrib.auth.decorators import login_required
 # 引入刚才定义的ArticlePostForm表单类
 from .forms import ArticlePostForm
 # 引入User模型
@@ -33,6 +34,7 @@ def article_detail(request, id):
     return render(request, 'article/detail.html', context)
 
 # 写文章的视图
+@login_required(login_url='/userprofile/login/')
 def article_create(request):
     # 判断用户是否提交数据
     if request.method == "POST":
@@ -43,7 +45,7 @@ def article_create(request):
             # 保存数据，但暂时不提交到数据库中
             new_article = article_post_form.save(commit=False)
             # 指定数据库中 id=1 的用户为作者
-            new_article.author = User.objects.get(id=1)
+            new_article.author = User.objects.get(id=request.user.id)
             # 将新文章保存到数据库中
             new_article.save()
             # 完成后返回到文章列表
