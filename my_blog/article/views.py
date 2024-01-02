@@ -5,21 +5,32 @@ from django.contrib.auth.decorators import login_required
 # 引入刚才定义的ArticlePostForm表单类
 from .forms import ArticlePostForm
 # 引入User模型
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, AnonymousUser
+from django.core.paginator import Paginator
 
 from .models import ArticlePost
 
 # Create your views here.
 def article_list(request):
-    
-    articles = ArticlePost.objects.all()
+
+    article_list = ArticlePost.objects.all()
+    paginator = Paginator(article_list, 1)
+    page = request.GET.get('page')
+    articles = paginator.get_page(page)
+
     context = {'articles':articles}
 
     return render(request, 'article/list.html', context)
 
+
 # 文章详情
 def article_detail(request, id):
     article = ArticlePost.objects.get(id=id)
+
+    if not isinstance(request.user, AnonymousUser):
+        article.total_views += 1
+        article.save(update_fields=['total_views'])
+    print(request.user)
 
     # 将markdown语法渲染成html样式
     article.body = markdown.markdown(article.body,
@@ -77,6 +88,7 @@ def article_safe_delete(request, id):
     else:
         return HttpResponse("仅允许post请求")
 
+@login_required(login_url='/userprofile/login/')
 def article_update(request, id):
     """
     更新文章的视图函数
@@ -86,6 +98,9 @@ def article_update(request, id):
     """
     article = ArticlePost.objects.get(id=id)
 
+    if request.user != article.author:
+        return HttpResponse("抱歉，你无权修改这篇文章。")
+    
     if request.method == 'POST':
         article_post_form = ArticlePostForm(data=request.POST)
 
