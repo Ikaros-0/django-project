@@ -7,19 +7,39 @@ from .forms import ArticlePostForm
 # 引入User模型
 from django.contrib.auth.models import User, AnonymousUser
 from django.core.paginator import Paginator
+from django.db.models import Q
 
 from .models import ArticlePost
 
 # Create your views here.
 def article_list(request):
 
-    article_list = ArticlePost.objects.all()
-    paginator = Paginator(article_list, 1)
+    search = request.GET.get('search')
+    order = request.GET.get('order')
+    if search:
+        if order == 'total_views':
+            article_list = ArticlePost.objects.filter(
+                Q(title__icontains = search) |
+                Q(body_icontains = search)
+            ).order_by('-total_views')
+        else:
+            article_list = ArticlePost.objects.filter(
+                Q(title__icontains=search) |
+                Q(body__icontains=search)
+            )
+    else:
+        search = ''
+        if order == 'total_views':
+            article_list = ArticlePost.objects.all().order_by('-total_views')
+        else:
+            article_list = ArticlePost.objects.all()
+    
+    paginator = Paginator(article_list, 3)
     page = request.GET.get('page')
     articles = paginator.get_page(page)
 
-    context = {'articles':articles}
-
+    context = { 'articles': articles, 'order': order, 'search': search }
+    
     return render(request, 'article/list.html', context)
 
 
@@ -27,21 +47,24 @@ def article_list(request):
 def article_detail(request, id):
     article = ArticlePost.objects.get(id=id)
 
-    if not isinstance(request.user, AnonymousUser):
+    if not isinstance(request.user, AnonymousUser) and request.user != article.author:
+        # 只统计已登录用户（不包括作者本人）
         article.total_views += 1
         article.save(update_fields=['total_views'])
     print(request.user)
 
-    # 将markdown语法渲染成html样式
-    article.body = markdown.markdown(article.body,
+    md = markdown.Markdown(
         extensions=[
-        # 包含 缩写、表格等常用扩展
         'markdown.extensions.extra',
-        # 语法高亮扩展
         'markdown.extensions.codehilite',
-        ])
+        'markdown.extensions.toc',
+        ]
+    )
+    article.body = md.convert(article.body)
 
-    context = { 'article': article }
+    # 新增了md.toc对象
+    context = { 'article': article, 'toc': md.toc }
+
     return render(request, 'article/detail.html', context)
 
 # 写文章的视图
