@@ -10,6 +10,7 @@ from django.core.paginator import Paginator
 from django.db.models import Q
 
 from .models import ArticlePost
+from comment.models import Comment
 
 # Create your views here.
 def article_list(request):
@@ -46,6 +47,7 @@ def article_list(request):
 # 文章详情
 def article_detail(request, id):
     article = ArticlePost.objects.get(id=id)
+    comments = Comment.objects.filter(article=id)
 
     if not isinstance(request.user, AnonymousUser) and request.user != article.author:
         # 只统计已登录用户（不包括作者本人）
@@ -63,7 +65,7 @@ def article_detail(request, id):
     article.body = md.convert(article.body)
 
     # 新增了md.toc对象
-    context = { 'article': article, 'toc': md.toc }
+    context = { 'article': article, 'toc': md.toc , 'comments': comments}
 
     return render(request, 'article/detail.html', context)
 
