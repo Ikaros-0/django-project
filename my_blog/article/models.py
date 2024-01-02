@@ -7,6 +7,17 @@ from django.contrib.auth.models import User
 from django.utils import timezone  
 from django.urls import reverse
 
+    
+class ArticleColumn(models.Model):
+    """
+    栏目的model
+    """
+    title = models.CharField(max_length = 100, blank = True)
+    created = models.DateTimeField(default = timezone.now)
+
+    def __str__(self):
+        return self.title
+
 # 博客文章数据模型
 class ArticlePost(models.Model):
     # 文章作者。参数 on_delete 用于指定数据删除的方式，避免两个关联表的数据不一致。
@@ -26,6 +37,15 @@ class ArticlePost(models.Model):
 
     # 统计浏览量
     total_views = models.PositiveIntegerField(default=0)
+
+    # 文章栏目
+    column = models.ForeignKey(
+        ArticleColumn,
+        null  = True,
+        blank = True,
+        on_delete = models.CASCADE,
+        related_name = 'article',
+    )
 
     # 内部类 class Meta 用于给 model 定义元数据
     class Meta:

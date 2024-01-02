@@ -9,7 +9,7 @@ from django.contrib.auth.models import User, AnonymousUser
 from django.core.paginator import Paginator
 from django.db.models import Q
 
-from .models import ArticlePost
+from .models import ArticlePost, ArticleColumn
 from comment.models import Comment
 
 # Create your views here.
@@ -82,6 +82,9 @@ def article_create(request):
             new_article = article_post_form.save(commit=False)
             # 指定数据库中 id=1 的用户为作者
             new_article.author = User.objects.get(id=request.user.id)
+            # 设置栏目
+            if request.POST['column'] != 'none':
+                new_article.column = ArticleColumn.objects.get(id=request.POST['column'])
             # 将新文章保存到数据库中
             new_article.save()
             # 完成后返回到文章列表
@@ -93,8 +96,10 @@ def article_create(request):
     else:
         # 创建表单类实例
         article_post_form = ArticlePostForm()
+
+        columns = ArticleColumn.objects.all()
         # 赋值上下文
-        context = { 'article_post_form': article_post_form }
+        context = { 'article_post_form': article_post_form, 'columns':columns }
         # 返回模板
         return render(request, 'article/create.html', context)
     
@@ -132,6 +137,10 @@ def article_update(request, id):
         if article_post_form.is_valid():
             article.title = request.POST['title']
             article.body = request.POST['body']
+            if request.POST['column'] != 'none':
+                article.column = ArticleColumn.objects.get(id=request.POST['column'])
+            else:
+                article.column =  None
             article.save()
 
             return redirect("article:article_detail",id=id)
@@ -141,6 +150,9 @@ def article_update(request, id):
             return HttpResponse("提交的表单有误，请重新填写。")
     else:
         article_post_form = ArticlePostForm()
-        context = {'article':article, 'article_post_form':article_post_form}
+        columns =ArticleColumn.objects.all()
+        context = {'article':article, 
+                   'article_post_form':article_post_form,
+                   'columns':columns}
 
         return render(request, 'article/update.html', context)
