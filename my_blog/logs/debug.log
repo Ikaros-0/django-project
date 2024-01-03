@@ -1,0 +1,48 @@
+WARNING 2024-01-03 21:21:58,630 log 3048 21828 Not Found: /article/article-detail/111/
+WARNING 2024-01-03 21:25:41,889 log 21284 16416 Not Found: /article/article-detail/111/
+WARNING 2024-01-03 21:25:48,221 log 21284 16416 Not Found: /article/article-detail/111/
+WARNING 2024-01-03 21:34:04,718 log 20528 22508 Something went wrong!
+ERROR 2024-01-03 21:34:04,754 log 20528 22508 Internal Server Error: /logging/
+Traceback (most recent call last):
+  File "F:\Anaconda3\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "F:\Anaconda3\lib\site-packages\django\core\handlers\base.py", line 204, in _get_response
+    self.check_response(response, callback)
+  File "F:\Anaconda3\lib\site-packages\django\core\handlers\base.py", line 332, in check_response
+    raise ValueError(
+ValueError: The view my_blog.log.whatever didn't return an HttpResponse object. It returned None instead.
+WARNING 2024-01-03 21:34:43,807 log 8096 14708 Something went wrong!
+ERROR 2024-01-03 21:34:43,851 log 8096 14708 Internal Server Error: /execute-whatever/
+Traceback (most recent call last):
+  File "F:\Anaconda3\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "F:\Anaconda3\lib\site-packages\django\core\handlers\base.py", line 204, in _get_response
+    self.check_response(response, callback)
+  File "F:\Anaconda3\lib\site-packages\django\core\handlers\base.py", line 332, in check_response
+    raise ValueError(
+ValueError: The view my_blog.log.whatever didn't return an HttpResponse object. It returned None instead.
+WARNING 2024-01-03 21:34:44,144 log 8096 14708 Not Found: /favicon.ico
+WARNING 2024-01-03 21:34:54,821 log 8096 12672 Something went wrong!
+ERROR 2024-01-03 21:34:54,848 log 8096 12672 Internal Server Error: /execute-whatever/
+Traceback (most recent call last):
+  File "F:\Anaconda3\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "F:\Anaconda3\lib\site-packages\django\core\handlers\base.py", line 204, in _get_response
+    self.check_response(response, callback)
+  File "F:\Anaconda3\lib\site-packages\django\core\handlers\base.py", line 332, in check_response
+    raise ValueError(
+ValueError: The view my_blog.log.whatever didn't return an HttpResponse object. It returned None instead.
+WARNING 2024-01-03 21:35:41,149 log 17192 11944 Something went wrong!
+ERROR 2024-01-03 21:35:41,186 log 17192 11944 Internal Server Error: /execute-whatever/
+Traceback (most recent call last):
+  File "F:\Anaconda3\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "F:\Anaconda3\lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\PythonSeries\django-project\my_blog\my_blog\log.py", line 11, in whatever
+    return HttpResponse('Whatever function executed successfully!')
+NameError: name 'HttpResponse' is not defined
+WARNING 2024-01-03 21:36:07,855 log 13628 9636 Something went wrong!
+WARNING 2024-01-03 21:36:11,755 log 13628 9636 Something went wrong!
+WARNING 2024-01-03 21:36:23,986 log 13628 9636 Something went wrong!
+WARNING 2024-01-03 21:38:13,568 log 21920 20060 Not Found: /article/article-detail/111/

@@ -16,6 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from .log import whatever
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -23,4 +24,6 @@ urlpatterns = [
      # 用户管理
     path('userprofile/', include('userprofile.urls', namespace='userprofile')),
     path('comment/', include('comment.urls', namespace='comment')),
+    # 测试自定义日志URL
+    path('execute-whatever/', whatever, name='execute_whatever'),
 ]

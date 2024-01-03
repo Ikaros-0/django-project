@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 import markdown
 from django.contrib.auth.decorators import login_required
@@ -46,7 +46,7 @@ def article_list(request):
 
 # 文章详情
 def article_detail(request, id):
-    article = ArticlePost.objects.get(id=id)
+    article = get_object_or_404(ArticlePost, id=id)
     comments = Comment.objects.filter(article=id)
 
     if not isinstance(request.user, AnonymousUser) and request.user != article.author:
